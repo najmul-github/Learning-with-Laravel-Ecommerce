@@ -25,4 +25,11 @@ class HomeController extends Controller
     {
         return view('home');
     }
+    
+    public function landingPage()
+    {
+        $products = Product::where('featured', true)->take(8)->inRandomOrder()->get();
+
+        return view('landing-page')->with('products', $products);
+    }
 }

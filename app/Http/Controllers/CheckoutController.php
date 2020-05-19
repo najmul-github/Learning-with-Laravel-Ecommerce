@@ -240,4 +240,32 @@ class CheckoutController extends Controller
 
         return false;
     }
+
+        public function paymentGateway(Request $request)
+        {
+             $id=Cart::get($id);
+            $charge = Stripe::charges()->create([
+                'amount' => getNumbers()->get('newTotal') / 100,
+                'currency' => 'CAD',
+                'source' => $request->stripeToken,
+                'description' => 'Order',
+                'receipt_email' => $request->email,
+                'metadata' => [
+                    'contents' => $contents,
+                    'quantity' => Cart::instance('default')->count(),
+                    'discount' => collect(session()->get('coupon'))->toJson(),
+                ],
+            ]);
+
+            $order = $this->addToOrdersTables($request, null);
+            Mail::send(new OrderPlaced($order));
+
+            // decrease the quantities of all the products in the cart
+            $this->decreaseQuantities();
+
+            Cart::instance('default')->destroy();
+            session()->forget('coupon');
+
+            return redirect()->route('confirmation.index')->with('success_message', 'Thank you! Your payment has been successfully accepted!');
+        }
 }

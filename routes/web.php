@@ -46,3 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-orders', 'OrdersController@index')->name('orders.index');
     Route::get('/my-orders/{order}', 'OrdersController@show')->name('orders.show');
 });
+
+Route:get('/frontpage','HomeController@landingPage')->name('landingPage.index');
+Route:get('cartxyz/{product}','CartController@quantity')->name('chartxyz.index');
+Route:post('cartxyz/{product}','CheckoutController@paymentGateway')->name('checkoutxyz.stripe');
